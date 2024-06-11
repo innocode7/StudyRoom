@@ -5,7 +5,6 @@ from PIL import Image, ImageTk
 import requests
 from io import BytesIO
 import os
-from datetime import datetime
 
 class ThumbnailDownloader:
     def __init__(self, root):
@@ -28,6 +27,8 @@ class ThumbnailDownloader:
         self.download_button.pack(pady=5)
 
         self.thumbnail_url = None
+        self.video_title = None
+        self.channel_name = None
 
     def fetch_thumbnail(self):
         video_url = self.url_entry.get()
@@ -38,6 +39,8 @@ class ThumbnailDownloader:
         try:
             yt = YouTube(video_url)
             self.thumbnail_url = yt.thumbnail_url
+            self.video_title = yt.title
+            self.channel_name = yt.author
             response = requests.get(self.thumbnail_url)
             img_data = BytesIO(response.content)
             img = Image.open(img_data)
@@ -58,12 +61,10 @@ class ThumbnailDownloader:
         downloads_folder = os.path.join(os.path.expanduser("~"), "Downloads")
 
         # Generate the filename
-        today_date = datetime.now().strftime("%Y%m%d")
-        for i in range(1, 1000):
-            filename = f"thumbnail_{today_date}_{i}.jpg"
-            file_path = os.path.join(downloads_folder, filename)
-            if not os.path.exists(file_path):
-                break
+        safe_video_title = "".join(c if c.isalnum() else "_" for c in self.video_title)
+        safe_channel_name = "".join(c if c.isalnum() else "_" for c in self.channel_name)
+        filename = f"{safe_video_title}_{safe_channel_name}.jpg"
+        file_path = os.path.join(downloads_folder, filename)
 
         # Save the thumbnail
         response = requests.get(self.thumbnail_url)
