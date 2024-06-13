@@ -22,13 +22,17 @@ class ThumbnailDownloader:
         self.url_entry.pack(padx=10, pady=5)
         self.url_entry.focus_set()
 
+        # 버튼 프레임 생성
+        button_frame = tk.Frame(root)
+        button_frame.pack(pady=5)
+
         # 입력 필드 리셋 버튼
-        self.reset_button = tk.Button(root, text="Reset", command=self.reset_input)
-        self.reset_button.pack(side=tk.LEFT, padx=5)
+        self.reset_button = tk.Button(button_frame, text="Reset", command=self.reset_input)
+        self.reset_button.pack(side=tk.LEFT, padx=(10, 5))
 
         # 썸네일 추출 버튼
-        self.fetch_button = tk.Button(root, text="Fetch Thumbnail", command=self.fetch_thumbnail)
-        self.fetch_button.pack(pady=5)
+        self.fetch_button = tk.Button(button_frame, text="Fetch Thumbnail", command=self.fetch_thumbnail)
+        self.fetch_button.pack(side=tk.LEFT, padx=(5, 10))
         self.fetch_button.bind("<Enter>", self.on_enter)
         self.fetch_button.bind("<Leave>", self.on_leave)
 
@@ -92,7 +96,7 @@ class ThumbnailDownloader:
         base_filename, file_extension = os.path.splitext(file_path)
         counter = 1
         while os.path.exists(file_path):
-            file_path = f"{base_filename}_{counter}{file_extension}"
+            file_path = f"{base_filename}({counter}){file_extension}"
             counter += 1
 
         # 썸네일 저장
@@ -110,7 +114,8 @@ class ThumbnailDownloader:
 
         success_msg = tk.Toplevel(self.root)
         success_msg.title("Success")
-        tk.Label(success_msg, text=f"Thumbnail downloaded to {file_path}").pack(pady=10)
+        success_msg.geometry("400x100")  # 메시지 창 크기 제한
+        tk.Label(success_msg, text=f"Thumbnail downloaded to\\n{file_path}", wraplength=380).pack(pady=10)
         tk.Button(success_msg, text="Check Thumbnail", command=open_folder).pack(pady=5)
 
     # 버튼에 마우스가 호버될 때 배경색 변경
