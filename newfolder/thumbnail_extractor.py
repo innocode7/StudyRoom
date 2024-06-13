@@ -6,7 +6,6 @@ import requests
 from io import BytesIO
 import os
 import subprocess  # 파일 탐색기를 열기 위해 사용
-from datetime import datetime
 
 class ThumbnailDownloader:
     def __init__(self, root):
@@ -20,7 +19,7 @@ class ThumbnailDownloader:
         # URL 입력 필드
         self.url_entry = tk.Entry(root, width=50)
         self.url_entry.pack(padx=10, pady=5)
-        self.url_entry.focus_set()
+        self.url_entry.focus_set()  # URL 입력 필드에 커서 활성화
 
         # 버튼 프레임 생성
         button_frame = tk.Frame(root)
@@ -28,11 +27,13 @@ class ThumbnailDownloader:
 
         # 입력 필드 리셋 버튼
         self.reset_button = tk.Button(button_frame, text="Reset", command=self.reset_input)
-        self.reset_button.pack(side=tk.LEFT, padx=(10, 5))
+        self.reset_button.pack(side=tk.LEFT, padx=(10, 15))  # 리셋 버튼과 썸네일 추출 버튼 사이의 간격 3배 증가
+        self.reset_button.bind("<Enter>", self.on_enter_reset)
+        self.reset_button.bind("<Leave>", self.on_leave)
 
         # 썸네일 추출 버튼
         self.fetch_button = tk.Button(button_frame, text="Fetch Thumbnail", command=self.fetch_thumbnail)
-        self.fetch_button.pack(side=tk.LEFT, padx=(5, 10))
+        self.fetch_button.pack(side=tk.LEFT)
         self.fetch_button.bind("<Enter>", self.on_enter)
         self.fetch_button.bind("<Leave>", self.on_leave)
 
@@ -114,13 +115,24 @@ class ThumbnailDownloader:
 
         success_msg = tk.Toplevel(self.root)
         success_msg.title("Success")
-        success_msg.geometry("400x100")  # 메시지 창 크기 제한
-        tk.Label(success_msg, text=f"Thumbnail downloaded to\\n{file_path}", wraplength=380).pack(pady=10)
-        tk.Button(success_msg, text="Check Thumbnail", command=open_folder).pack(pady=5)
+        success_msg.geometry("400x120")  # 메시지 창 크기 제한
+        tk.Label(success_msg, text=f"Thumbnail downloaded to:\n{file_path}", wraplength=380).pack(pady=10)
+        check_button = tk.Button(success_msg, text="Check Thumbnail", command=open_folder)
+        check_button.pack(pady=(5, 20))  # 'Check Thumbnail' 버튼 아래에 여백 추가
+        check_button.bind("<Enter>", self.on_enter_check)
+        check_button.bind("<Leave>", self.on_leave)
 
     # 버튼에 마우스가 호버될 때 배경색 변경
     def on_enter(self, e):
         e.widget.config(bg='lightgrey')
+
+    # 'Reset' 버튼에 마우스가 호버될 때 배경색 변경
+    def on_enter_reset(self, e):
+        e.widget.config(bg='lightcoral')
+
+    # 'Check Thumbnail' 버튼에 마우스가 호버될 때 배경색 변경
+    def on_enter_check(self, e):
+        e.widget.config(bg='lightblue')
 
     # 버튼에 마우스가 호버되지 않을 때 원래 배경색으로 변경
     def on_leave(self, e):
