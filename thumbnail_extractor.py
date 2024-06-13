@@ -90,7 +90,7 @@ class ThumbnailDownloader:
         # 안전한 파일 이름 생성
         safe_video_title = "".join(c if c.isalnum() else "_" for c in self.video_title)
         safe_channel_name = "".join(c if c.isalnum() else "_" for c in self.channel_name)
-
+        
         # 동일한 이름의 파일이 있을 경우 일련번호 추가
         filename = f"{safe_video_title}_{safe_channel_name}.jpg"
         file_path = os.path.join(downloads_folder, filename)
